@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Quest: The Lost World</title>
+<style>:root{--bg:#07110d;--panel:#12281e;--line:#3a6b51;--gold:#c9a24a;--cream:#f4e2b0;--txt:#e8f0ea;--mut:#9fc9b2}
+*{box-sizing:border-box}
+html{background:#07110d}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(1200px 600px at 10% -10%,#1b3d2f 0,transparent 50%),radial-gradient(900px 500px at 110% 10%,#3a2a12 0,transparent 45%),linear-gradient(180deg,#07110d,#0d1c16 45%,#08140f);color:var(--txt);font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh;background-color:#07110d}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;letter-spacing:.04em;color:var(--cream);margin:.2em 0 .5em}
+#app{display:flex;min-height:100vh}
+aside{width:250px;flex:none;padding:18px;background:linear-gradient(180deg,#0a1611,#12241b);border-right:1px solid #2d5a45}
+main{flex:1;padding:24px 32px;max-width:1100px;min-width:0}
+aside h3{margin:0}.cap{color:var(--mut);font-size:.9rem}
+.metric{margin:12px 0}.metric .v{font-size:1.7rem;color:var(--cream)}.metric .l{color:var(--mut);font-size:.85rem}
+input[type=text],textarea,select{width:100%;background:#0b1913;color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit}
+textarea{min-height:90px}
+label{display:block;margin:10px 0 4px;color:var(--mut);font-size:.92rem}
+.btn{background:linear-gradient(180deg,#c9a24a,#8a6a24);color:#14110a;border:0;font-weight:700;border-radius:10px;padding:9px 16px;cursor:pointer;font:inherit;font-weight:700}
+.btn:hover{filter:brightness(1.1)}.btn.block{display:block;width:100%;margin:8px 0}
+.btn.ghost{background:#1a3326;color:var(--cream);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}.row>*{flex:1;min-width:150px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:8px 0 20px}
+.banner{border-radius:18px;min-height:190px;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid rgba(244,226,176,.25);box-shadow:0 18px 40px rgba(0,0,0,.35)}
+.banner.l{background:linear-gradient(180deg,rgba(8,20,15,.15),rgba(8,20,15,.72) 70%),radial-gradient(circle at 30% 30%,#7ad39a,transparent 42%),linear-gradient(135deg,#245c3d,#6b3a1a 55%,#1a3a4a)}
+.banner.r{background:linear-gradient(180deg,rgba(8,20,15,.1),rgba(8,20,15,.75) 75%),radial-gradient(circle at 70% 20%,#f4d27a,transparent 40%),linear-gradient(135deg,#16324a,#2e5e3f 50%,#5a2a6b)}
+.banner .art{font-size:42px}.banner .c{color:var(--cream);font-family:Georgia,serif;font-size:18px;margin-top:8px}
+.story,.card,.box{background:rgba(12,28,22,.72);border:1px solid var(--line);border-radius:16px;padding:16px 20px;line-height:1.55}
+.box{margin:14px 0}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:16px 0}
+.card{background:linear-gradient(180deg,rgba(18,40,30,.92),rgba(10,22,17,.92));display:flex;flex-direction:column}
+.card.locked{opacity:.45;filter:grayscale(.4)}.card .meta{color:var(--mut);font-size:.92rem;margin:4px 0}.card .btn{margin-top:auto}
+.pill{display:inline-block;background:#1e4634;color:var(--cream);border:1px solid var(--gold);border-radius:999px;padding:2px 10px;font-size:.78rem;width:max-content}
+.win{background:linear-gradient(90deg,#1d4d32,#245c3d);border:1px solid var(--cream);padding:14px 16px;border-radius:12px;margin:12px 0}
+.fail{background:linear-gradient(90deg,#4a1f1f,#5a2a22);border:1px solid #e0a090;color:#fde8e2;padding:14px 16px;border-radius:12px;margin:12px 0}
+.lesson{background:rgba(30,50,70,.55);border-left:4px solid var(--gold);padding:12px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.tablewrap{max-height:300px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.9rem}th,td{padding:5px 10px;text-align:right;border-bottom:1px solid #1f3d2f}th{position:sticky;top:0;background:#16322a;color:var(--cream)}
+th:first-child,td:first-child{text-align:left}
+td.na{color:#e8a08a;font-style:italic}td.bad{color:#ff8a7a;font-weight:700}
+.stats{display:flex;gap:26px;flex-wrap:wrap;margin:12px 0}.stats .v{font-size:1.5rem;color:var(--cream)}.stats .l{color:var(--mut);font-size:.82rem}
+canvas{width:100%;height:320px;background:rgba(0,0,0,.18);border-radius:12px;border:1px solid #214534}
+.heat td{text-align:center;min-width:70px;font-weight:600}
+.checks label{display:inline-flex;align-items:center;gap:6px;margin:4px 14px 4px 0;color:var(--txt)}
+.checks input,input[type=checkbox]{width:auto}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.small{font-size:.85rem;color:var(--mut)}
+ol.how li{margin:6px 0}
+@media(max-width:820px){#app{flex-direction:column}aside{width:100%}main{padding:16px}.grid{grid-template-columns:1fr}.hero{grid-template-columns:1fr}}
+</style></head>
+<body><div id="app"><aside id="side"></aside><main id="main"></main></div>
+<script>
+'use strict';
+/* ===== Data Quest core: data generators + small ML library (no DOM) ===== */
+const LEVELS = [
+  {id:1,name:'Missing Village',mission:'Find and repair missing data',concept:'Data cleaning',xp:100,emoji:'🏘️'},
+  {id:2,name:'Forest of Patterns',mission:'Discover hidden relationships',concept:'Correlation',xp:100,emoji:'🌲'},
+  {id:3,name:'Monster Arena',mission:'Group similar monsters',concept:'Clustering',xp:120,emoji:'👾'},
+  {id:4,name:'Prediction Bridge',mission:'Predict which bridge is safe',concept:'Classification',xp:120,emoji:'🌉'},
+  {id:5,name:'Overfitting Castle',mission:'Train a model that works on new situations',concept:'Overfitting',xp:150,emoji:'🏰'},
+  {id:6,name:'Final Boss',mission:'Build the best predictive model',concept:'Model evaluation',xp:200,emoji:'👑'},
+];
+
+/* ---------- random numbers ---------- */
+function mulberry32(seed){let a=seed>>>0;return function(){a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function makeGauss(r){return function(m,s){let u=0;while(u===0)u=r();const v=r();return m+s*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};}
+function shuffle(a,r){for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const clip=(v,lo,hi)=>Math.min(hi,Math.max(lo,v));
+const round=(v,d=0)=>{const p=Math.pow(10,d);return Math.round(v*p)/p;};
+
+/* ---------- stats ---------- */
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+const median=a=>{const b=[...a].sort((x,y)=>x-y);const m=b.length>>1;return b.length%2?b[m]:(b[m-1]+b[m])/2;};
+const std=a=>{const m=mean(a);return Math.sqrt(a.reduce((s,v)=>s+(v-m)*(v-m),0)/a.length)||1;};
+function corr(a,b){const ma=mean(a),mb=mean(b);let n=0,da=0,db=0;for(let i=0;i<a.length;i++){n+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2;}return n/Math.sqrt(da*db);}
+
+/* ---------- Level 1: torn census ---------- */
+const NAMES=['Asha','Bram','Cira','Dalen','Elowen','Fen','Grita','Halsi','Ivo','Jora','Kell','Lumi','Mira','Nox','Orin','Pia','Quill','Ryn','Sable','Tovin','Uma','Vex','Wren','Xan','Yara','Zed','Nori','Pell','Rook','Sage','Tess','Ulric','Vale','Wisp','Yor','Zinn','Oats','Kira','Lark','Moss'];
+const MIN_VILLAGERS=30;
+function rawVillage(){
+  const r=mulberry32(7),n=40;
+  const ri=(lo,hi)=>lo+Math.floor(r()*(hi-lo));
+  const rows=NAMES.slice(0,n).map(nm=>({name:nm,age:ri(12,72),gold:ri(4,90),health:ri(40,100)}));
+  const pick=k=>shuffle([...Array(n).keys()],r).slice(0,k);
+  pick(8).forEach(i=>rows[i].age=null);
+  pick(7).forEach(i=>rows[i].gold=null);
+  pick(6).forEach(i=>rows[i].health=null);
+  rows[2].age=-8;rows[11].age=240;rows[5].gold=-30;rows[19].gold=null;
+  return rows;
+}
+function cleanVillage(raw,fills,fixInvalid){
+  let rows=raw.map(o=>({...o}));
+  if(fixInvalid)rows.forEach(o=>{if(o.age!==null&&(o.age<0||o.age>100))o.age=null;if(o.gold!==null&&o.gold<0)o.gold=null;});
+  const dropAny=Object.values(fills).includes('drop');
+  for(const col of ['age','gold','health']){
+    const m=fills[col];if(m==='drop')continue;
+    const vals=rows.map(o=>o[col]).filter(v=>v!==null);
+    const f=m==='mean'?mean(vals):median(vals);
+    rows.forEach(o=>{if(o[col]===null)o[col]=f;});
+  }
+  if(dropAny)rows=rows.filter(o=>o.age!==null&&o.gold!==null&&o.health!==null);
+  rows.forEach(o=>{for(const c of ['age','gold','health'])if(o[c]!==null)o[c]=round(o[c],1);});
+  return rows;
+}
+function evalVillage(rows){
+  let missing=0,ia=0,ig=0;
+  rows.forEach(o=>{for(const c of ['age','gold','health'])if(o[c]===null)missing++;if(o.age!==null&&(o.age<0||o.age>100))ia++;if(o.gold!==null&&o.gold<0)ig++;});
+  if(missing)return[false,`${missing} missing values remain. Impute or carefully drop them — empty cells still hide villagers.`];
+  if(ia||ig)return[false,"Impossible ages or negative gold remain. Turn on 'Repair cursed values' so outliers become missing, then impute."];
+  if(rows.length<MIN_VILLAGERS)return[false,`Only ${rows.length} villagers survived the repair. Dropping every incomplete row starves the village — impute instead of deleting everyone.`];
+  return[true,`All ${rows.length} remaining records are complete and valid. The village remembers its people.`];
+}
+
+/* ---------- Level 2: forest ---------- */
+const FOREST_FEATS=['rainfall','tree_glow','monster_count','crystal_power','fog'];
+function forestData(){
+  const r=mulberry32(21),g=makeGauss(r),n=80;const d={};FOREST_FEATS.forEach(f=>d[f]=[]);
+  for(let i=0;i<n;i++){
+    const rain=g(40,10),glow=0.85*rain+g(0,2.2),fog=0.35*rain+g(12,6),mon=g(15,5)-0.08*rain,cry=g(50,12);
+    d.rainfall.push(round(Math.max(5,rain),2));d.tree_glow.push(round(Math.max(0,glow),2));
+    d.monster_count.push(round(Math.max(0,mon),2));d.crystal_power.push(round(Math.max(0,cry),2));d.fog.push(round(Math.max(0,fog),2));
+  }
+  return d;
+}
+function strongestPair(d){let best=[null,null,-1];for(let i=0;i<FOREST_FEATS.length;i++)for(let j=i+1;j<FOREST_FEATS.length;j++){const v=Math.abs(corr(d[FOREST_FEATS[i]],d[FOREST_FEATS[j]]));if(v>best[2])best=[FOREST_FEATS[i],FOREST_FEATS[j],v];}return best;}
+
+/* ---------- ML helpers ---------- */
+function fitScaler(X){const d=X[0].length,m=[],s=[];for(let j=0;j<d;j++){const c=X.map(r=>r[j]);m.push(mean(c));s.push(std(c));}return{m,s,t:Z=>Z.map(r=>r.map((v,j)=>(v-m[j])/s[j]))};}
+function stratSplit(y,testFrac,seed){const r=mulberry32(seed),tr=[],te=[];for(const c of[0,1]){const ids=[];y.forEach((v,i)=>{if(v===c)ids.push(i);});shuffle(ids,r);const nt=Math.round(ids.length*testFrac);te.push(...ids.slice(0,nt));tr.push(...ids.slice(nt));}return{tr,te};}
+const pick=(A,idx)=>idx.map(i=>A[i]);
+function accuracy(y,p){let c=0;for(let i=0;i<y.length;i++)if(y[i]===p[i])c++;return c/y.length;}
+function confMatrix(y,p){const m=[[0,0],[0,0]];for(let i=0;i<y.length;i++)m[y[i]][p[i]]++;return m;}
+function prf(y,p){const m=confMatrix(y,p),tp=m[1][1],fp=m[0][1],fn=m[1][0];const pr=tp+fp?tp/(tp+fp):0,rc=tp+fn?tp/(tp+fn):0;return{precision:pr,recall:rc,f1:pr+rc?2*pr*rc/(pr+rc):0,acc:accuracy(y,p),cm:m};}
+
+function fitLR(X,y,iters=500,lr=0.3,l2=0.001){
+  const n=X.length,d=X[0].length;let w=new Array(d).fill(0),b=0;
+  for(let it=0;it<iters;it++){const gw=new Array(d).fill(0);let gb=0;
+    for(let i=0;i<n;i++){let z=b;for(let j=0;j<d;j++)z+=w[j]*X[i][j];const e=1/(1+Math.exp(-z))-y[i];for(let j=0;j<d;j++)gw[j]+=e*X[i][j];gb+=e;}
+    for(let j=0;j<d;j++)w[j]-=lr*(gw[j]/n+l2*w[j]);b-=lr*gb/n;}
+  return{predict:Z=>Z.map(r=>{let z=b;for(let j=0;j<d;j++)z+=w[j]*r[j];return z>0?1:0;})};
+}
+function gini(n0,n1){const n=n0+n1;return n?1-(n0/n)**2-(n1/n)**2:0;}
+function buildTree(X,y,idx,depth,maxDepth,mtry,r){
+  let n1=0;for(const i of idx)n1+=y[i];const n=idx.length,n0=n-n1;const leaf={leaf:true,p:n1/n};
+  if(depth>=maxDepth||n1===0||n0===0||n<2)return leaf;
+  let feats=[...Array(X[0].length).keys()];if(mtry&&mtry<feats.length)feats=shuffle(feats,r).slice(0,mtry);
+  let best=null;
+  for(const f of feats){
+    const s=idx.slice().sort((a,b)=>X[a][f]-X[b][f]);let l0=0,l1=0;
+    for(let k=0;k<n-1;k++){y[s[k]]?l1++:l0++;if(X[s[k]][f]===X[s[k+1]][f])continue;
+      const imp=((l0+l1)*gini(l0,l1)+(n-l0-l1)*gini(n0-l0,n1-l1))/n;
+      if(!best||imp<best.imp)best={imp,f,t:(X[s[k]][f]+X[s[k+1]][f])/2};}
+  }
+  if(!best)return leaf;
+  const L=[],R=[];for(const i of idx)(X[i][best.f]<=best.t?L:R).push(i);
+  if(!L.length||!R.length)return leaf;
+  return{leaf:false,f:best.f,t:best.t,l:buildTree(X,y,L,depth+1,maxDepth,mtry,r),r:buildTree(X,y,R,depth+1,maxDepth,mtry,r)};
+}
+const treeP=(t,x)=>{while(!t.leaf)t=x[t.f]<=t.t?t.l:t.r;return t.p;};
+function fitTree(X,y,maxDepth,seed=0){const t=buildTree(X,y,[...Array(X.length).keys()],0,maxDepth,0,mulberry32(seed));return{predict:Z=>Z.map(x=>treeP(t,x)>=0.5?1:0)};}
+function fitForest(X,y,nTrees,maxDepth,seed=0){
+  const r=mulberry32(seed),n=X.length,mtry=Math.max(1,Math.round(Math.sqrt(X[0].length))),trees=[];
+  for(let k=0;k<nTrees;k++){const idx=Array.from({length:n},()=>Math.floor(r()*n));trees.push(buildTree(X,y,idx,0,maxDepth,mtry,r));}
+  return{predict:Z=>Z.map(x=>trees.reduce((s,t)=>s+treeP(t,x),0)/nTrees>=0.5?1:0)};
+}
+function fitKNN(X,y,k){return{predict:Z=>Z.map(x=>{const d=X.map((r,i)=>[r.reduce((s,v,j)=>s+(v-x[j])**2,0),y[i]]).sort((a,b)=>a[0]-b[0]).slice(0,k);const v=d.reduce((s,q)=>s+q[1],0);return v*2>k?1:0;})};}
+
+/* ---------- K-means + ARI ---------- */
+function kmeans(X,k,seed=0,nInit=10){
+  const r=mulberry32(seed),n=X.length,d=X[0].length;let best=null;
+  const dist=(a,b)=>a.reduce((s,v,j)=>s+(v-b[j])**2,0);
+  for(let run=0;run<nInit;run++){
+    const C=[X[Math.floor(r()*n)].slice()];
+    while(C.length<k){const D=X.map(x=>Math.min(...C.map(c=>dist(x,c))));const tot=D.reduce((a,b)=>a+b,0);let t=r()*tot,i=0;while(i<n-1&&(t-=D[i])>0)i++;C.push(X[i].slice());}
+    let lab=new Array(n).fill(0);
+    for(let it=0;it<100;it++){
+      let ch=false;for(let i=0;i<n;i++){let bi=0,bd=Infinity;for(let c=0;c<k;c++){const dd=dist(X[i],C[c]);if(dd<bd){bd=dd;bi=c;}}if(lab[i]!==bi){lab[i]=bi;ch=true;}}
+      const S=C.map(()=>new Array(d).fill(0)),N=new Array(k).fill(0);
+      for(let i=0;i<n;i++){N[lab[i]]++;for(let j=0;j<d;j++)S[lab[i]][j]+=X[i][j];}
+      for(let c=0;c<k;c++)if(N[c])C[c]=S[c].map(v=>v/N[c]);
+      if(!ch)break;}
+    const inertia=X.reduce((s,x,i)=>s+dist(x,C[lab[i]]),0);
+    if(!best||inertia<best.inertia)best={inertia,labels:lab.slice()};
+  }
+  return best.labels;
+}
+function ari(a,b){
+  const ka=[...new Set(a)],kb=[...new Set(b)],c2=x=>x*(x-1)/2;const tab={};
+  a.forEach((v,i)=>{const key=v+'|'+b[i];tab[key]=(tab[key]||0)+1;});
+  let sij=0;for(const k in tab)sij+=c2(tab[k]);
+  const ra=ka.map(v=>c2(a.filter(x=>x===v).length)).reduce((s,v)=>s+v,0);
+  const rb=kb.map(v=>c2(b.filter(x=>x===v).length)).reduce((s,v)=>s+v,0);
+  const exp=ra*rb/c2(a.length),mx=(ra+rb)/2;return mx===exp?1:(sij-exp)/(mx-exp);
+}
+
+/* ---------- Level 3: monsters ---------- */
+const MONSTER_FEATS=['speed','strength','size'];
+const ARI_WIN=0.70;
+function monsters(){
+  const r=mulberry32(42),g=makeGauss(r);
+  const T={Swiftling:{speed:[88,6],strength:[28,6],size:[18,4]},Ironhide:{speed:[32,6],strength:[86,6],size:[78,5]},Mystic:{speed:[58,7],strength:[55,7],size:[48,6]}};
+  const rows=[];let idx=0;
+  for(const t in T){for(let i=0;i<24;i++){const o={monster:t.slice(0,3)+'-'+(idx+i+1),tribe:t};for(const f of MONSTER_FEATS)o[f]=round(clip(g(...T[t][f]),5,100),1);rows.push(o);}idx+=24;}
+  return rows;
+}
+function runKMeans(rows,feats,k){
+  const X=fitScaler(rows.map(o=>feats.map(f=>o[f])));const Z=X.t(rows.map(o=>feats.map(f=>o[f])));
+  const labels=kmeans(Z,k,0,10);
+  const tribes=rows.map(o=>o.tribe);return{labels,ari:ari(tribes,labels)};
+}
+
+/* ---------- Level 4: bridges ---------- */
+const BRIDGE_FEATS=['wood_quality','span','wind','age'];
+const ACC_WIN_4=0.80;
+function bridges(){
+  const r=mulberry32(11),g=makeGauss(r),n=160,rows=[];
+  for(let i=0;i<n;i++){
+    const wood=20+80*r(),span=8+82*r(),wind=2+38*r(),age=1+79*r();
+    const score=0.045*wood-0.03*span-0.06*wind-0.025*age+g(0,0.35);
+    rows.push({bridge:'Span-'+(i+1),wood_quality:round(wood,1),span:round(span,1),wind:round(wind,1),age:round(age,1),safe:score>0.15?1:0});
+  }
+  return rows;
+}
+function trainBridge(rows,model,depth){
+  const X=rows.map(o=>BRIDGE_FEATS.map(f=>o[f])),y=rows.map(o=>o.safe);
+  const {tr,te}=stratSplit(y,0.30,4);const Xtr=pick(X,tr),Xte=pick(X,te),ytr=pick(y,tr),yte=pick(y,te);
+  let m,A=Xtr,B=Xte;
+  if(model==='lr'){const sc=fitScaler(Xtr);A=sc.t(Xtr);B=sc.t(Xte);m=fitLR(A,ytr,400);}else m=fitTree(Xtr,ytr,depth,4);
+  const p=m.predict(B);return{acc:accuracy(yte,p),cm:confMatrix(yte,p),n:yte.length};
+}
+
+/* ---------- Level 5: castle ---------- */
+const TEST_MIN=0.75,GAP_MAX=0.13;
+function castle(){
+  const r=mulberry32(36),g=makeGauss(r),n=220,X=[],y=[];
+  for(let i=0;i<n;i++){const a=g(0,1),b=g(0,1),c=g(0,1),nz=g(0,1.0);X.push([a,b,c]);y.push(1.0*a-0.8*b+1.6*a*b+nz>0?1:0);}
+  const {tr,te}=stratSplit(y,0.35,2);
+  const Xtr=pick(X,tr),Xte=pick(X,te),ytr=pick(y,tr),yte=pick(y,te),curve=[];
+  for(let d=1;d<=15;d++){const m=fitTree(Xtr,ytr,d,0);curve.push({depth:d,train:accuracy(ytr,m.predict(Xtr)),test:accuracy(yte,m.predict(Xte))});}
+  return curve;
+}
+function castleVerdict(train,test){
+  const gap=train-test;
+  if(test<TEST_MIN&&train<0.86)return'Underfit';
+  if(gap>GAP_MAX+1e-9)return'Overfit';
+  return'Good fit';
+}
+
+/* ---------- Level 6: kingdom ---------- */
+const KINGDOM_FEATS=['corruption_signal','citizen_trust','mana_flow','market_noise','cloud_static'];
+const F1_WIN=0.80;
+function kingdom(){
+  const r=mulberry32(99),g=makeGauss(r),n=240,rows=[];
+  for(let i=0;i<n;i++){
+    const c=g(0.4,0.25),t=g(0.55,0.2),m=g(0.5,0.22),no=g(0,1),st=g(0,1);
+    const s=2.8*c-2.1*t-1.4*m+g(0,0.22);
+    rows.push({region:'Hex-'+(i+1),corruption_signal:round(clip(c,0,1),3),citizen_trust:round(clip(t,0,1),3),mana_flow:round(clip(m,0,1),3),market_noise:round(no,3),cloud_static:round(st,3),corrupted:s>0.15?1:0});
+  }
+  return rows;
+}
+function trainKingdom(rows,feats,algo,scale,P){
+  const X=rows.map(o=>feats.map(f=>o[f])),y=rows.map(o=>o.corrupted);
+  const {tr,te}=stratSplit(y,0.30,3);let A=pick(X,tr),B=pick(X,te);const ytr=pick(y,tr),yte=pick(y,te);
+  if(scale){const sc=fitScaler(A);A=sc.t(A);B=sc.t(B);}
+  let m;
+  if(algo==='lr')m=fitLR(A,ytr,500);
+  else if(algo==='tree')m=fitTree(A,ytr,P.depth,3);
+  else if(algo==='forest')m=fitForest(A,ytr,P.trees,P.depth,3);
+  else m=fitKNN(A,ytr,P.k);
+  return prf(yte,m.predict(B));
+}
+
+if(false)module.exports={LEVELS,rawVillage,cleanVillage,evalVillage,forestData,strongestPair,monsters,runKMeans,bridges,trainBridge,castle,castleVerdict,kingdom,trainKingdom,corr,FOREST_FEATS,MONSTER_FEATS,KINGDOM_FEATS};
+
+/* ===== UI ===== */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pct=v=>Math.round(v*100)+'%';
+let S=loadState();
+function loadState(){try{const s=JSON.parse(localStorage.getItem('dq_state'));if(s&&s.v===1){s.page='home';s.level=null;return s;}}catch(e){}return{v:1,page:'home',player:'Wanderer',xp:0,completed:[],unlocked:[1],level:null};}
+function saveState(){try{localStorage.setItem('dq_state',JSON.stringify(S));}catch(e){}}
+const unlocked=id=>S.unlocked.includes(id),done=id=>S.completed.includes(id);
+function complete(id){const L=LEVELS[id-1];if(!done(id)){S.completed.push(id);S.xp+=L.xp;}if(id<6&&!unlocked(id+1))S.unlocked.push(id+1);saveState();sidebar();}
+function go(page,level){S.page=page;S.level=level||null;saveState();render();window.scrollTo(0,0);}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){go(g.dataset.go,g.dataset.level?+g.dataset.level:null);}});
+
+/* ---------- banners ---------- */
+function winHTML(id,msg){const L=LEVELS[id-1],already=done(id);complete(id);
+  return `<div class="win"><b>World restored:</b> ${L.name}.${already?'':` You gained ${L.xp} XP.`} ${esc(msg)}</div>
+  <div class="lesson"><b>${L.concept}</b> — ${L.mission}.</div>
+  <div class="row"><button class="btn" data-go="map">Continue to map</button>${id===6?'<button class="btn" data-go="ending">Face the restored kingdom</button>':''}</div>`;}
+const failHTML=m=>`<div class="fail"><b>The corruption holds.</b> ${esc(m)}</div>`;
+const lessonHTML=t=>`<div class="lesson">${t}</div>`;
+function header(id,blurb,lesson){const L=LEVELS[id-1];return `<h2>${L.emoji} ${L.name}</h2><div class="cap">Mission: ${L.mission} · Concept: ${L.concept}</div><p>${blurb}</p><button class="btn ghost" data-go="map">← Back to map</button>${lessonHTML(lesson)}`;}
+function tableHTML(rows,cols,hl){return `<div class="tablewrap"><table><thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${cols.map(c=>{const v=r[c];const cls=v===null?'na':(hl&&hl(c,v)?'bad':'');return `<td class="${cls}">${v===null?'— missing —':(typeof v==='number'?v:esc(v))}</td>`;}).join('')}</tr>`).join('')}</tbody></table></div>`;}
+function statsHTML(items){return `<div class="stats">${items.map(([l,v])=>`<div><div class="v">${v}</div><div class="l">${l}</div></div>`).join('')}</div>`;}
+function cmHTML(cm,names){const mx=Math.max(...cm.flat(),1);return `<table class="heat" style="width:auto"><tr><th></th><th colspan="2">Predicted</th></tr><tr><th>Actual</th><th>${names[0]}</th><th>${names[1]}</th></tr>${[0,1].map(i=>`<tr><th>${names[i]}</th>${[0,1].map(j=>{const a=cm[i][j]/mx;return `<td style="background:rgba(${Math.round(60+150*a)},${Math.round(110+90*a)},${Math.round(80-20*a)},${.25+.75*a});font-size:1.2rem">${cm[i][j]}</td>`;}).join('')}</tr>`).join('')}</table>`;}
+
+/* ---------- canvas charts ---------- */
+const PAL=['#f4d27a','#5fd39a','#e08a7a','#7ab8f4','#c79af4','#f4a8d2','#9ad3d3','#d3d39a'];
+function setup(cv){const dpr=window.devicePixelRatio||1,W=cv.clientWidth||600,H=cv.clientHeight||320;cv.width=W*dpr;cv.height=H*dpr;const c=cv.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,W,H);c.font='12px Segoe UI, sans-serif';return{c,W,H};}
+function axes(c,W,H,m,x0,x1,y0,y1,xl,yl){c.strokeStyle='#3a6b51';c.fillStyle='#9fc9b2';c.lineWidth=1;c.beginPath();c.moveTo(m.l,m.t);c.lineTo(m.l,H-m.b);c.lineTo(W-m.r,H-m.b);c.stroke();
+  for(let i=0;i<=4;i++){const xv=x0+(x1-x0)*i/4,yv=y0+(y1-y0)*i/4,px=m.l+(W-m.l-m.r)*i/4,py=H-m.b-(H-m.t-m.b)*i/4;c.textAlign='center';c.fillText(xv.toFixed(Math.abs(x1-x0)<10?2:0),px,H-m.b+16);c.textAlign='right';c.fillText(yv.toFixed(Math.abs(y1-y0)<10?2:0),m.l-6,py+4);c.strokeStyle='rgba(58,107,81,.25)';c.beginPath();c.moveTo(m.l,py);c.lineTo(W-m.r,py);c.stroke();}
+  c.textAlign='center';c.fillStyle='#e8f0ea';c.fillText(xl,(m.l+W-m.r)/2,H-6);c.save();c.translate(14,(m.t+H-m.b)/2);c.rotate(-Math.PI/2);c.fillText(yl,0,0);c.restore();}
+function scatter(cv,pts,xl,yl,groups){
+  const {c,W,H}=setup(cv),m={l:56,r:14,t:14,b:40};const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+  let x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys);const px=(x1-x0)*.06||1,py=(y1-y0)*.06||1;x0-=px;x1+=px;y0-=py;y1+=py;
+  axes(c,W,H,m,x0,x1,y0,y1,xl,yl);
+  pts.forEach(p=>{c.fillStyle=PAL[(p.g||0)%PAL.length];c.globalAlpha=.85;c.beginPath();c.arc(m.l+(p.x-x0)/(x1-x0)*(W-m.l-m.r),H-m.b-(p.y-y0)/(y1-y0)*(H-m.t-m.b),4,0,7);c.fill();});c.globalAlpha=1;
+  if(groups){groups.forEach((g,i)=>{c.fillStyle=PAL[i%PAL.length];c.fillRect(W-110,16+i*16,10,10);c.fillStyle='#e8f0ea';c.textAlign='left';c.fillText(g,W-95,25+i*16);});}
+}
+function lineChart(cv,xs,series,vx,xl,yl,y0,y1){
+  const {c,W,H}=setup(cv),m={l:56,r:14,t:14,b:40};axes(c,W,H,m,xs[0],xs[xs.length-1],y0,y1,xl,yl);
+  const X=v=>m.l+(v-xs[0])/(xs[xs.length-1]-xs[0])*(W-m.l-m.r),Y=v=>H-m.b-(v-y0)/(y1-y0)*(H-m.t-m.b);
+  if(vx!=null){c.strokeStyle='#c9a24a';c.setLineDash([5,4]);c.beginPath();c.moveTo(X(vx),m.t);c.lineTo(X(vx),H-m.b);c.stroke();c.setLineDash([]);}
+  series.forEach((s,k)=>{c.strokeStyle=PAL[k==0?1:0];c.fillStyle=c.strokeStyle;c.lineWidth=2;c.beginPath();s.v.forEach((v,i)=>{i?c.lineTo(X(xs[i]),Y(v)):c.moveTo(X(xs[i]),Y(v));});c.stroke();s.v.forEach((v,i)=>{c.beginPath();c.arc(X(xs[i]),Y(v),3,0,7);c.fill();});c.fillRect(W-130,16+k*16,10,10);c.fillStyle='#e8f0ea';c.textAlign='left';c.fillText(s.name,W-115,25+k*16);});
+}
+function heatHTML(d,feats){const cs=feats.map(a=>feats.map(b=>corr(d[a],d[b])));
+  return `<table class="heat" style="width:auto"><tr><th></th>${feats.map(f=>`<th>${f}</th>`).join('')}</tr>${feats.map((a,i)=>`<tr><th>${a}</th>${cs[i].map(v=>{const t=Math.abs(v);return `<td style="background:rgba(${Math.round(40+170*t)},${Math.round(90+120*t)},${Math.round(70-10*t)},${.3+.7*t});color:${t>.55?'#10200f':'#e8f0ea'}">${v.toFixed(2)}</td>`;}).join('')}</tr>`).join('')}</table>`;}
+const sel=(id,opts,def,label)=>`<div><label for="${id}">${label}</label><select id="${id}">${opts.map(o=>{const v=Array.isArray(o)?o[0]:o,t=Array.isArray(o)?o[1]:o;return `<option value="${v}"${v===def?' selected':''}>${t}</option>`;}).join('')}</select></div>`;
+const slider=(id,min,max,val,label,step=1)=>`<div><label for="${id}">${label}: <b id="${id}_v">${val}</b></label><input type="range" id="${id}" min="${min}" max="${max}" value="${val}" step="${step}"></div>`;
+function bindSlider(id,fn){const s=$('#'+id);s.addEventListener('input',()=>{$('#'+id+'_v').textContent=s.value;fn&&fn();});}
+
+/* ---------- levels ---------- */
+function level1(root){
+  const raw=rawVillage();
+  const miss=k=>raw.filter(o=>o[k]===null).length;
+  root.innerHTML=header(1,'The census scrolls are torn. Ages vanish, gold turns to dust, and a few numbers are cursed. Restore the village register without erasing too many lives.','Missing data is common. Dropping every incomplete row can throw away signal. Imputation (mean/median) keeps the census usable when values are missing at random.')+
+  `<h3>Torn census</h3>${tableHTML(raw,['name','age','gold','health'],(c,v)=>(c==='age'&&(v<0||v>100))||(c==='gold'&&v<0))}
+  <p class="small">Missing — age: ${miss('age')}, gold: ${miss('gold')}, health: ${miss('health')}. Watch for cursed ages (-8, 240) and negative gold (shown in red).</p>
+  <div class="row">${['age','gold','health'].map((c,i)=>sel('f_'+c,[['mean','Mean'],['median','Median'],['drop','Drop rows with missing values']],i===2?'mean':'median','Repair '+c+' with')).join('')}</div>
+  <label class="checks"><input type="checkbox" id="fix" checked> Repair cursed values (invalid age / negative gold)</label>
+  <button class="btn" id="go">Cast repair spell</button><div id="res"></div>`;
+  $('#go').onclick=()=>{
+    const rows=cleanVillage(raw,{age:$('#f_age').value,gold:$('#f_gold').value,health:$('#f_health').value},$('#fix').checked);
+    const [ok,msg]=evalVillage(rows);
+    $('#res').innerHTML=`<h3>Restored census (${rows.length} villagers)</h3>${tableHTML(rows,['name','age','gold','health'])}`+(ok?winHTML(1,msg):failHTML(msg));
+  };
+}
+function level2(root){
+  const d=forestData(),[ta,tb,tr]=strongestPair(d);
+  root.innerHTML=header(2,"The forest whispers in numbers. Some forces rise together; others wander alone. Find the strongest hidden relationship among the grove's measurements.",'Correlation measures how two numeric features move together. A value near 1 or -1 is a strong linear relationship; near 0 means little linear link. (Correlation is not causation!)')+
+  `<h3>Correlation heatmap</h3><div class="tablewrap" style="max-height:none;padding:8px">${heatHTML(d,FOREST_FEATS)}</div>
+  <div class="row">${sel('a',FOREST_FEATS,'rainfall','First signal')}${sel('b',FOREST_FEATS,'tree_glow','Second signal')}</div>
+  <canvas id="cv"></canvas>${statsHTML([['Pearson correlation','<span id="r">–</span>']])}
+  <button class="btn" id="go">Declare this the hidden bond</button><div id="res"></div>`;
+  const upd=()=>{const a=$('#a').value,b=$('#b').value;if(a===b){$('#r').textContent='pick two different signals';setup($('#cv'));return;}
+    $('#r').textContent=corr(d[a],d[b]).toFixed(3);scatter($('#cv'),d[a].map((v,i)=>({x:v,y:d[b][i]})),a,b);};
+  $('#a').onchange=$('#b').onchange=upd;upd();
+  $('#go').onclick=()=>{const a=$('#a').value,b=$('#b').value;let h;
+    if(a===b)h=failHTML('A feature does not reveal a relationship with itself. Choose two different signals.');
+    else if(new Set([a,b]).size===2&&[a,b].sort().join()===[ta,tb].sort().join())h=winHTML(2,`${ta} and ${tb} move together most strongly (|r| = ${tr.toFixed(2)}). The grove's glow follows the rain.`);
+    else h=failHTML(`|r| between ${a} and ${b} is ${Math.abs(corr(d[a],d[b])).toFixed(2)}. A stronger bond still hides in the forest (look for the darkest cell in the heatmap).`);
+    $('#res').innerHTML=h;};
+}
+function level3(root){
+  const rows=monsters();
+  const shown=rows.filter((_,i)=>i%5===0).map(o=>({monster:o.monster,speed:o.speed,strength:o.strength,size:o.size}));
+  root.innerHTML=header(3,'Monsters flood the arena with different speed, strength, and size. Use K-Means to group similar creatures. Correct tribes unlock the gate.','K-Means clustering partitions points into k groups by nearest centroid. Choosing k well matters: too few merges tribes, too many splits a single tribe into fragments.')+
+  `<h3>Arena scouting report</h3>${tableHTML(shown,['monster','speed','strength','size'])}<p class="small">Tribe labels are hidden from you — that is the puzzle. (Showing a sample of ${rows.length} monsters.)</p>
+  <div class="row">${slider('k',2,8,4,'Number of tribes (k)')}${sel('x',MONSTER_FEATS,'speed','X axis')}${sel('y',MONSTER_FEATS,'strength','Y axis')}</div>
+  <label>Cluster using features</label><div class="checks">${MONSTER_FEATS.map(f=>`<label><input type="checkbox" class="uf" value="${f}" checked> ${f}</label>`).join('')}</div>
+  <button class="btn" id="go">Run K-Means grouping</button><div id="res"></div>`;
+  bindSlider('k');
+  $('#go').onclick=()=>{
+    const feats=[...document.querySelectorAll('.uf:checked')].map(i=>i.value),k=+$('#k').value,xf=$('#x').value,yf=$('#y').value;
+    if(feats.length<2)return $('#res').innerHTML=failHTML('Need at least two features so the tribes can separate in space.');
+    if(xf===yf)return $('#res').innerHTML=failHTML('Pick two different axes to see the grouping.');
+    const {labels,ari:a}=runKMeans(rows,feats,k);let ok=false,msg;
+    if(k===3&&a>=ARI_WIN){ok=true;msg=`k=3 recovered the Swiftling, Ironhide, and Mystic tribes (ARI ${a.toFixed(2)}). The gate opens.`;}
+    else if(k<3)msg=`k=${k} glues different tribes together (ARI ${a.toFixed(2)}). The arena has more than ${k} kinds of monster.`;
+    else if(k>3)msg=`k=${k} over-splits the tribes (ARI ${a.toFixed(2)}). Extra clusters fracture creatures that belong together.`;
+    else msg=`k is right but the feature mix is weak (ARI ${a.toFixed(2)}). Include speed, strength, and size so the three blobs separate.`;
+    $('#res').innerHTML=`<h3>Monster clusters</h3><canvas id="cv"></canvas>${statsHTML([['Agreement with hidden tribes (Adjusted Rand Index)',a.toFixed(2)]])}<div id="out"></div>`;
+    scatter($('#cv'),rows.map((o,i)=>({x:o[xf],y:o[yf],g:labels[i]})),xf,yf,[...new Set(labels)].sort().map(l=>'cluster '+l));
+    $('#out').innerHTML=ok?winHTML(3,msg):failHTML(msg);
+  };
+}
+function level4(root){
+  const rows=bridges();const prev=rows.slice(0,12).map(o=>({...o,safe:o.safe?'safe':'unsafe'}));
+  root.innerHTML=header(4,'The chasm has many bridges. Some will hold; others crumble in the wind. Train a classifier on scouted crossings, then judge the untried spans.','Classification predicts a category (safe / unsafe) from features. Always test on bridges the model has never seen — training accuracy alone can lie.')+
+  `<h3>Scouted bridges</h3>${tableHTML(prev,['bridge','wood_quality','span','wind','age','safe'])}
+  <div class="row">${sel('m',[['lr','Logistic Regression'],['tree','Decision Tree']],'lr','Classifier')}<div id="dw" style="display:none">${slider('d',1,8,3,'Tree depth')}</div></div>
+  <button class="btn" id="go">Train and cross the test spans</button><div id="res"></div>`;
+  bindSlider('d');$('#m').onchange=()=>$('#dw').style.display=$('#m').value==='tree'?'block':'none';
+  $('#go').onclick=()=>{const r=trainBridge(rows,$('#m').value,+$('#d').value),ok=r.acc>=ACC_WIN_4;
+    const msg=ok?`Your scouts named the safe spans with ${pct(r.acc)} accuracy. The party crosses.`:`Test accuracy ${pct(r.acc)} is below ${pct(ACC_WIN_4)}. Try logistic regression (a strong linear boundary fits this chasm) or a modest tree depth.`;
+    $('#res').innerHTML=`<h3>Confusion matrix (test bridges)</h3>${cmHTML(r.cm,['unsafe','safe'])}${statsHTML([['Test accuracy',pct(r.acc)],['Test bridges',r.n]])}`+(ok?winHTML(4,msg):failHTML(msg));};
+}
+function level5(root){
+  const curve=castle();
+  root.innerHTML=header(5,'The castle rewards models that memorize every cobblestone — and then collapses on new rooms. Choose a tree depth that still works on halls the model has never walked.','Overfitting means training score looks heroic while test score falls. Underfitting means both scores stay weak. A useful model generalizes: high test accuracy and a small train–test gap.')+
+  `${slider('d',1,15,11,'Decision tree max_depth')}<h3>Train vs test as the tree grows</h3><canvas id="cv"></canvas><div id="st"></div>
+  <button class="btn" id="go">Seal this model into the castle</button><div id="res"></div>`;
+  const cur=()=>{const d=+$('#d').value,r=curve[d-1],gap=r.train-r.test;return{d,train:r.train,test:r.test,gap,badge:castleVerdict(r.train,r.test)};};
+  const upd=()=>{const c=cur();lineChart($('#cv'),curve.map(r=>r.depth),[{name:'Train accuracy',v:curve.map(r=>r.train)},{name:'Test accuracy',v:curve.map(r=>r.test)}],c.d,'max_depth','accuracy',0.45,1.02);
+    $('#st').innerHTML=statsHTML([['Train accuracy',pct(c.train)],['Test accuracy',pct(c.test)],['Train − test gap',pct(c.gap)],['Verdict',c.badge]]);};
+  bindSlider('d',upd);upd();
+  $('#go').onclick=()=>{const c=cur();let h;
+    if(c.badge==='Good fit'&&c.test>=TEST_MIN&&c.gap<=GAP_MAX+1e-9)h=winHTML(5,`Depth ${c.d} generalizes (test ${pct(c.test)}, gap ${pct(c.gap)}). New halls stay standing.`);
+    else if(c.badge==='Overfit')h=failHTML(`Depth ${c.d} memorizes the training stones (gap ${pct(c.gap)}). Lower max_depth until the two curves stay close.`);
+    else if(c.badge==='Underfit')h=failHTML(`Depth ${c.d} is too simple (test ${pct(c.test)}). Grow the tree a little so it can learn the ward pattern.`);
+    else h=failHTML(`Close, but test accuracy ${pct(c.test)} is still under ${pct(TEST_MIN)} or the gap ${pct(c.gap)} exceeds ${pct(GAP_MAX)}. Aim for a modest depth.`);
+    $('#res').innerHTML=h;};
+}
+function level6(root){
+  const rows=kingdom();const prev=rows.slice(0,12).map(o=>({...o,corrupted:o.corrupted?'corrupted':'clear'}));
+  root.innerHTML=header(6,"The AI scrambles the last regions of the kingdom. Build a model that flags corrupted regions on unseen land — measured by F1, not vanity training scores.",'Model evaluation uses held-out data and several metrics. Accuracy can hide a weak minority class; precision, recall, and F1 tell you how well corrupted hexes are actually caught.')+
+  `<h3>Kingdom survey</h3>${tableHTML(prev,['region',...KINGDOM_FEATS,'corrupted'])}
+  <label>Features for the final model</label><div class="checks">${KINGDOM_FEATS.map(f=>`<label><input type="checkbox" class="uf" value="${f}"${['corruption_signal','citizen_trust','mana_flow'].includes(f)?' checked':''}> ${f}</label>`).join('')}</div>
+  <div class="row">${sel('algo',[['lr','Logistic Regression'],['tree','Decision Tree'],['forest','Random Forest'],['knn','k-Nearest Neighbors']],'lr','Algorithm')}</div>
+  <label class="checks"><input type="checkbox" id="sc" checked> Scale features</label>
+  <div class="row" id="params"></div>
+  <button class="btn" id="go">Challenge the AI</button><div id="res"></div>`;
+  const P=()=>{const a=$('#algo').value;$('#params').innerHTML=a==='tree'?slider('depth',1,12,4,'max_depth'):a==='forest'?slider('depth',2,12,5,'max_depth')+slider('trees',20,200,80,'n_estimators',10):a==='knn'?slider('k',1,15,5,'k neighbors'):'';
+    ['depth','trees','k'].forEach(i=>{if($('#'+i))bindSlider(i);});};
+  $('#algo').onchange=P;P();
+  $('#go').onclick=()=>{const feats=[...document.querySelectorAll('.uf:checked')].map(i=>i.value);
+    if(feats.length<2)return $('#res').innerHTML=failHTML('Choose at least two features. A single signal is too easy for the AI to scramble.');
+    const a=$('#algo').value,p={depth:$('#depth')?+$('#depth').value:4,trees:$('#trees')?+$('#trees').value:80,k:$('#k')?+$('#k').value:5};
+    $('#res').innerHTML='<p class="small">Training…</p>';
+    setTimeout(()=>{const r=trainKingdom(rows,feats,a,$('#sc').checked,p),ok=r.f1>=F1_WIN;
+      const msg=ok?`F1 ${pct(r.f1)} on unseen hexes. The AI's hold breaks. The Data Kingdom is yours to restore.`:`F1 ${pct(r.f1)} is below the ${pct(F1_WIN)} relic threshold. Prefer corruption_signal, citizen_trust, and mana_flow — market_noise and cloud_static are decoys. Note how accuracy can look fine while recall is weak.`;
+      $('#res').innerHTML=statsHTML([['Accuracy',pct(r.acc)],['Precision',pct(r.precision)],['Recall',pct(r.recall)],['F1',pct(r.f1)]])+`<h3>Confusion matrix (held-out hexes)</h3>${cmHTML(r.cm,['clear','corrupted'])}`+(ok?winHTML(6,msg):failHTML(msg));},20);};
+}
+const RENDERERS={1:level1,2:level2,3:level3,4:level4,5:level5,6:level6};
+
+/* ---------- feedback (stored in this browser; downloadable CSV) ---------- */
+/* Optional: paste a Google Apps Script / Formspree URL here so EVERY tester's feedback is sent to you online. */
+const FEEDBACK_URL='';
+const FB_FIELDS=['timestamp','player','xp','levels_restored','rating','difficulty','favourite_level','learned_something','comment'];
+const getFB=()=>{try{return JSON.parse(localStorage.getItem('dq_feedback'))||[];}catch(e){return[];}};
+const setFB=a=>{try{localStorage.setItem('dq_feedback',JSON.stringify(a));return true;}catch(e){return false;}};
+const csvCell=v=>{v=String(v??'');return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+const toCSV=rows=>[FB_FIELDS.join(','),...rows.map(r=>FB_FIELDS.map(f=>csvCell(r[f])).join(','))].join('\n');
+function parseCSV(t){const rows=[];let row=[],cur='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=ch;}else if(ch==='"')q=true;else if(ch===','){row.push(cur);cur='';}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;row.push(cur);rows.push(row);row=[];cur='';}else cur+=ch;}if(cur||row.length){row.push(cur);rows.push(row);}
+  const h=rows.shift()||[];return rows.filter(r=>r.length>1).map(r=>Object.fromEntries(h.map((k,i)=>[k,r[i]])));}
+function download(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
+function feedbackForm(box,onSaved){
+  box.innerHTML=`<div class="box"><label>Overall, how much did you enjoy the game? <b id="rv">4</b> / 5</label><input type="range" id="rating" min="1" max="5" value="4">
+  <div class="row">${sel('diff',['Too easy','Easy','Just right','Hard','Too hard'],'Just right','How was the difficulty?')}${sel('fav',['No favourite yet',...LEVELS.map(l=>l.id+'. '+l.name)],'No favourite yet','Favourite world')}${sel('learn',['Yes','Somewhat','No'],'Yes','Did the game help you understand the concepts?')}</div>
+  <label for="cm">Comments or suggestions (optional)</label><textarea id="cm" maxlength="1000"></textarea>
+  <button class="btn" id="send" style="margin-top:12px">Send feedback</button><div id="fbmsg"></div></div>`;
+  $('#rating').oninput=()=>$('#rv').textContent=$('#rating').value;
+  $('#send').onclick=()=>{const r={timestamp:new Date().toISOString().slice(0,19),player:S.player,xp:S.xp,levels_restored:S.completed.length,rating:$('#rating').value,difficulty:$('#diff').value,favourite_level:$('#fav').value,learned_something:$('#learn').value,comment:$('#cm').value.trim().replace(/\n/g,' ')};
+    const all=getFB();all.push(r);const ok=setFB(all);
+    if(FEEDBACK_URL){try{fetch(FEEDBACK_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(r)}).catch(()=>{});}catch(e){}}
+    $('#fbmsg').innerHTML=`<div class="win">Thank you! Your feedback was saved${ok?'':' (browser storage unavailable — please download it now)'}${FEEDBACK_URL?' and sent online':''}.</div><button class="btn ghost" id="dl1">Download my response (CSV)</button> <span class="small">Send this file to the game owner.</span>`;
+    $('#dl1').onclick=()=>download('feedback_'+esc(S.player).replace(/\W+/g,'_')+'.csv',toCSV([r]));$('#cm').value='';if(onSaved)onSaved();};
+}
+function feedbackPage(root){
+  root.innerHTML=`<h1>Feedback</h1><p>Tell us what worked and what didn't. It takes less than a minute.</p><div id="fbf"></div>
+  <h3>Instructor view</h3><div class="box"><p class="small">Responses are stored in <b>this browser</b>. To combine responses from several testers, ask each to download their CSV, then import all the files here and download the combined file.</p>
+  <div class="row"><div><label>Import a feedback CSV from a peer</label><input type="file" id="imp" accept=".csv"></div></div><div id="fbtab"></div></div>
+  <button class="btn ghost" data-go="map">← Back to map</button>`;
+  const draw=()=>{const a=getFB();$('#fbtab').innerHTML=a.length?statsHTML([['Responses',a.length],['Average rating',(a.reduce((s,r)=>s+(+r.rating||0),0)/a.length).toFixed(1)+' / 5'],['Avg levels restored',(a.reduce((s,r)=>s+(+r.levels_restored||0),0)/a.length).toFixed(1)+' / 6']])+tableHTML(a,FB_FIELDS)+'<p><button class="btn" id="dla">Download all feedback.csv</button> <button class="btn ghost" id="clr">Clear stored feedback</button></p>':'<p class="small">No feedback yet.</p>';
+    if(a.length){$('#dla').onclick=()=>download('feedback.csv',toCSV(getFB()));$('#clr').onclick=()=>{if(confirm('Delete all stored feedback in this browser?')){setFB([]);draw();}};}};
+  $('#imp').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const add=parseCSV(rd.result).filter(r=>r.timestamp);const all=getFB().concat(add);setFB(all);draw();};rd.readAsText(f);};
+  feedbackForm($('#fbf'),draw);draw();
+}
+
+/* ---------- pages ---------- */
+function home(root){
+  root.innerHTML=`<h1>Data Quest — The Lost World</h1>
+  <div class="hero"><div class="banner l"><div class="art">🌸🌿🧚‍♀️</div><div class="c">The Data Kingdom, before the fall</div></div><div class="banner r"><div class="art">🏯🌙🤖</div><div class="c">An evil AI corrupts every world</div></div></div>
+  <div class="story"><b>Story:</b> An evil AI has corrupted the Data Kingdom. The player must travel through different worlds to restore the kingdom.<br><br>Each world represents a Data Science concept — and you discover it by experimenting, not by reading.</div>
+  <div class="row" style="margin-top:18px;max-width:420px"><button class="btn" data-go="map">${S.completed.length?'Continue':'Begin the quest'}</button></div>
+  <h3>How to play</h3><div class="box"><ol class="how"><li>Open the <b>World map</b> and enter the first open world. Worlds unlock in order.</li><li>Read the mission and the concept note, then <b>experiment</b>: change the settings (fill method, k, tree depth, features, algorithm).</li><li>Press the action button. The game <b>computes real results</b> on the data and tells you why it worked or not.</li><li>Use the feedback to adjust your choices and try again until the world is restored (+XP).</li><li>Restore all six worlds, then tell us what you thought via <b>Give feedback</b>.</li></ol></div>
+  <h3>Learning objectives</h3><div class="box"><ul><li>Clean data: spot missing and invalid values and choose between imputing and dropping.</li><li>Measure relationships with correlation (and know it is not causation).</li><li>Group unlabeled data with K-Means and judge the choice of k.</li><li>Classify with a model and evaluate it on unseen data.</li><li>Recognise overfitting vs underfitting from train/test curves.</li><li>Evaluate with accuracy, precision, recall and F1, not accuracy alone.</li></ul></div>`;
+}
+function mapPage(root){
+  root.innerHTML=`<h1>World Map</h1><p>Restore each world in order. Locked lands stay sealed until the previous concept is mastered.</p><div class="grid">${LEVELS.map(L=>{const u=unlocked(L.id),d=done(L.id);return `<div class="card${u?'':' locked'}"><span class="pill">${d?'Restored':u?'Open':'Locked'}</span><h3>${L.emoji} ${L.id}. ${L.name}</h3><p class="meta"><b>Game mission:</b> ${L.mission}</p><p class="meta"><b>Data Science concept:</b> ${L.concept}</p>${u?`<button class="btn" data-go="level" data-level="${L.id}">${d?'Revisit':'Enter'}</button>`:'<button class="btn" disabled>Sealed</button>'}</div>`;}).join('')}</div>`;
+}
+function ending(root){
+  root.innerHTML=`<h1>The Data Kingdom Restored</h1><div class="story">${esc(S.player)}, the six worlds stand clear of the AI's fog. Villages keep honest records, forests reveal true bonds, tribes stand grouped, bridges hold, models generalize, and evaluation — not vanity — decides the throne. You finish with <b>${S.xp} XP</b>.</div><h3>How was your quest?</h3><div id="fbf"></div><button class="btn" data-go="map">Return to map</button>`;
+  feedbackForm($('#fbf'));
+}
+function sidebar(){
+  $('#side').innerHTML=`<h3>🗺️ Data Quest</h3><div class="cap">The Lost World</div>
+  <label for="pn">Player name</label><input type="text" id="pn" value="${esc(S.player)}">
+  <div class="metric"><div class="v">${S.xp}</div><div class="l">XP</div></div><div class="metric"><div class="v">${S.completed.length} / 6</div><div class="l">Worlds restored</div></div>
+  ${S.level?`<p>Now exploring: <b>${LEVELS[S.level-1].name}</b></p>`:''}<hr style="border-color:#2d5a45">
+  <button class="btn block" data-go="home">Home</button><button class="btn block" data-go="map">World map</button><button class="btn block" data-go="feedback">Give feedback</button><button class="btn block ghost" id="reset">Reset run</button>`;
+  $('#pn').onchange=e=>{S.player=e.target.value.trim()||'Wanderer';saveState();};
+  $('#reset').onclick=()=>{if(confirm('Reset your progress?')){S.xp=0;S.completed=[];S.unlocked=[1];saveState();go('home');}};
+}
+function render(){
+  sidebar();const m=$('#main');
+  if(S.page==='level'&&S.level&&unlocked(S.level))RENDERERS[S.level](m);
+  else if(S.page==='map')mapPage(m);else if(S.page==='feedback')feedbackPage(m);else if(S.page==='ending')ending(m);else home(m);
+}
+if(typeof document!=='undefined'){window.addEventListener('DOMContentLoaded',render);}
+
+</script></body></html>
